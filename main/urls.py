@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from rest import views
+# from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,4 +24,5 @@ urlpatterns = [
     path('api/artist-get',views.ArtistGetListView.as_view()),
     path('api/artist-get/<int:pk>',views.ArtistDetialView.as_view()),
     path('chaining/', include('smart_selects.urls')),
+    # path('api-token-auth/', obtain_auth_token, name='api_token_auth')
 ]

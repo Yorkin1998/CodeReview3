@@ -7,9 +7,35 @@ from .models import Artist, Music, Album
 from rest import serializers
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 # Create your views here.
+#from rest_framework.authentication.permisssions import CustomObjectPermissions, IsOwner
+from rest_framework import permissions
 
+
+class AuthorAllStaffAllButEditOrReadOnly(permissions.BasePermission):
+    
+    #edit_methods = ("PUT", "PATCH")
+    def has_permission(self, request, view):
+        if request.user.is_authenticated and request.user.is_superuser:
+            return True
+    # def has_object_permission(self, request, view, obj):
+    #     print(request.user.is_superuser)
+    #     if request.user.is_superuser:
+    #         return True
+    #     else:
+    #         False
+        # if request.method in permissions.SAFE_METHODS:
+        #     return True
+
+        # if obj.author == request.user:
+        #     return True
+
+        # if request.user.is_staff and request.method not in self.edit_methods:
+        #     return False
+
+        # return False
 
 class APIGET(APIView):
+    permission_classes = [AuthorAllStaffAllButEditOrReadOnly]
     def get(self, request):
         queryset = Music.objects.all()
         serializer = MusicSerializer(instance=queryset, many=True)
@@ -17,8 +43,7 @@ class APIGET(APIView):
 
 
 class ArtistGetListView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
-
+    permission_classes = [AuthorAllStaffAllButEditOrReadOnly]
     def get(self, request):
         queryset = Artist.objects.all()
         serializer = ArtistSerializer(instance=queryset, many=True)
@@ -32,7 +57,7 @@ class ArtistGetListView(APIView):
 
 
 class ArtistDetialView(APIView):
-    permission_classes = [IsAuthenticated, IsAdminUser]
+    permission_classes = [AuthorAllStaffAllButEditOrReadOnly]
 
     def get(self, request, pk):
         queryset = Artist.objects.get(id=pk)
